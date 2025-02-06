@@ -5,6 +5,7 @@
   "scripts": {
     "start": "ts-node -r dotenv/config travianbot.ts",
     "prettier": "npx prettier . --write",
+    "lint": "eslint .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Ruben Palomo",
@@ -12,12 +13,14 @@
   "description": "",
   "dependencies": {
     "dotenv": "^16.4.7",
-    "lint": "^0.8.19",
     "puppeteer": "^24.2.0",
     "yarn": "^1.22.22"
   },
   "devDependencies": {
     "@types/qs": "^6.9.18",
-    "prettier": "3.4.2"
+    "eslint": "^9.19.0",
+    "globals": "^15.14.0",
+    "prettier": "3.4.2",
+    "typescript-eslint": "^8.23.0"
   }
 }

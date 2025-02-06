@@ -1,0 +1,23 @@
+{
+  "name": "travianbot",
+  "version": "1.0.0",
+  "main": "travianbot.ts",
+  "scripts": {
+    "start": "ts-node -r dotenv/config travianbot.ts",
+    "prettier": "npx prettier . --write",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Ruben Palomo",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "lint": "^0.8.19",
+    "puppeteer": "^24.2.0",
+    "yarn": "^1.22.22"
+  },
+  "devDependencies": {
+    "@types/qs": "^6.9.18",
+    "prettier": "3.4.2"
+  }
+}

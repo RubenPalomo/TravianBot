@@ -40,10 +40,10 @@ ________________________________________________________________________________
 TravianBot is a **Telegram bot** developed in Node.js and TypeScript that allows automating tasks in the Travian game through commands.
 
 ## 🚀 Features
-✅ Move troops between villages with /moveTroops.
-✅ Send resources between villages with /sendResources.
-✅ Upgrade buildings with /upgrade.
-✅ Recruit troops with /recruit.
+- ✅ Move troops between villages with /moveTroops.
+- ✅ Send resources between villages with /sendResources.
+- ✅ Upgrade buildings with /upgrade.
+- ✅ Recruit troops with /recruit.
 
 ## 📦 Installation
 ### 🔹 Clone the Repository

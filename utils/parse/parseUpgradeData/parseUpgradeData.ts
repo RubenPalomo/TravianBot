@@ -11,6 +11,7 @@ export const parseUpgradeData = (data: string[]): UpgradeData | null => {
 
   for (const element of data) {
     const [key, value] = element.split(":");
+    if (!value) return null;
     switch (key) {
       case "buildId":
         parsedData.buildId = value;

@@ -1,16 +1,17 @@
-import { url } from "../../utils/consts/travianConstants";
 import { TroopsRecruitmentProps } from "./TroopsRecruitment.props";
 
 export default async function TroopsRecruitment({
   page,
+  url,
   buildId,
   troopType,
   troopAmount,
   villageId,
+  locationId,
 }: TroopsRecruitmentProps): Promise<boolean> {
   try {
     await page.goto(
-      `${url}build.php?${villageId && "newdid=" + villageId}&gid=${buildId}`,
+      `${url}build.php?${villageId ? `newdid=${villageId}` : ""}${locationId ? `&id=${locationId}` : ""}&gid=${buildId}`,
       {
         waitUntil: "networkidle2",
       },
@@ -21,7 +22,7 @@ export default async function TroopsRecruitment({
 
     return true;
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return false;
   }
 }

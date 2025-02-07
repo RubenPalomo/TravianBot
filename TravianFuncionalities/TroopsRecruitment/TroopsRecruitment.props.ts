@@ -2,6 +2,7 @@ import { Page } from "puppeteer";
 
 export interface TroopsRecruitmentProps {
   page: Page;
+  url: string;
   buildId: string;
   troopAmount: number;
   troopType:
@@ -16,4 +17,5 @@ export interface TroopsRecruitmentProps {
     | "t9"
     | "t10";
   villageId?: string;
+  locationId?: string;
 }

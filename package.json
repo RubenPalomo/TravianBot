@@ -12,6 +12,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "mongodb": "^6.13.0",
     "node-telegram-bot-api": "^0.66.0",
     "puppeteer": "^24.2.0",
     "yarn": "^1.22.22"

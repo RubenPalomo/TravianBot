@@ -12,6 +12,7 @@ interface TroopsRecruitmentData {
     | "t8"
     | "t9"
     | "t10";
+  locationId?: string;
   villageId?: string;
 }
 
@@ -26,6 +27,7 @@ export const parseTroopsRecruitmentData = (
 
   for (const element of data) {
     const [key, value] = element.split(":");
+    if (!value) return null;
     switch (key) {
       case "buildId":
         parsedData.buildId = value;
@@ -37,6 +39,10 @@ export const parseTroopsRecruitmentData = (
 
       case "troopAmount":
         parsedData.troopAmount = parseInt(value);
+        break;
+
+      case "locationId":
+        parsedData.locationId = value;
         break;
 
       case "villageId":

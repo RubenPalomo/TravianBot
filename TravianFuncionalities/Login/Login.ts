@@ -1,8 +1,8 @@
 import { LoginProps } from "./Login.props";
-import { url } from "../../utils/consts/travianConstants";
 
 export default async function Login({
   page,
+  url,
   username,
   password,
 }: LoginProps): Promise<boolean> {
@@ -16,7 +16,7 @@ export default async function Login({
 
     return true;
   } catch (error: any) {
-    console.log(error);
+    console.error(error);
     return false;
   }
 }

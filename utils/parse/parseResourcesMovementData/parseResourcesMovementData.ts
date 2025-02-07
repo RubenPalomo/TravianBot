@@ -30,6 +30,7 @@ export const parseResourcesMovementData = (
 
   for (const element of data) {
     const [key, value] = element.split(":");
+    if (!value) return null;
     switch (key) {
       case "coordinates":
         const [x, y] = value.slice(1, -1).split(",");

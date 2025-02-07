@@ -1,15 +1,15 @@
-import { url } from "../../utils/consts/travianConstants";
 import { SendResourcesProps } from "./SendResources.props";
 
 export default async function SendResources({
   page,
+  url,
   coordinates,
   resourcesAmount,
   fromVillageId,
 }: SendResourcesProps): Promise<boolean> {
   try {
     await page.goto(
-      `${url}build.php?${fromVillageId && "newdid=" + fromVillageId}&t=5&gid=17&x=${coordinates.x}&y=${coordinates.y}`,
+      `${url}build.php?${fromVillageId ? `newdid=${fromVillageId}` : ""}&t=5&gid=17&x=${coordinates.x}&y=${coordinates.y}`,
       { waitUntil: "networkidle2" },
     );
 
@@ -23,7 +23,7 @@ export default async function SendResources({
 
     return true;
   } catch (error: any) {
-    console.log(error);
+    console.error(error);
     return false;
   }
 }

@@ -7,18 +7,20 @@ import { TravianManagerProps } from "./TravianManager.props";
 import TroopsRecruitment from "../TroopsRecruitment/TroopsRecruitment";
 
 export default async function TravianManager({
+  url,
   username,
   password,
   request,
   data,
 }: TravianManagerProps): Promise<boolean> {
-  const browser = await puppeteer.launch({ headless: false });
+  const browser = await puppeteer.launch({ headless: true });
 
   try {
     const page: Page = await browser.newPage();
     let response: boolean = false;
 
     const isLoggedIn: boolean = await Login({
+      url: url,
       page: page,
       username: username,
       password: password,
@@ -26,8 +28,9 @@ export default async function TravianManager({
 
     if (isLoggedIn) {
       switch (request) {
-        case "/moveTroops":
+        case "/movetroops":
           response = await TroopsMovement({
+            url: url,
             page: page,
             coordinates: data.coordinates,
             troopType: data.troopType,
@@ -38,8 +41,9 @@ export default async function TravianManager({
           });
           break;
 
-        case "/moveTroopsx3":
+        case "/movetroopsx3":
           response = await TroopsMovement({
+            url: url,
             page: page,
             coordinates: data.coordinates,
             troopType: data.troopType,
@@ -50,8 +54,9 @@ export default async function TravianManager({
           });
           break;
 
-        case "/sendResources":
+        case "/sendresources":
           response = await SendResources({
+            url: url,
             page: page,
             coordinates: data.coordinates,
             resourcesAmount: {
@@ -66,6 +71,7 @@ export default async function TravianManager({
 
         case "/upgrade":
           response = await UpgradeBuilding({
+            url: url,
             page: page,
             buildId: data.buildId,
             locationId: data.locationId,
@@ -75,6 +81,7 @@ export default async function TravianManager({
 
         case "/recruit":
           response = await TroopsRecruitment({
+            url: url,
             page: page,
             buildId: data.buildId,
             troopType: data.troopType,
@@ -87,11 +94,10 @@ export default async function TravianManager({
       }
     }
 
-    await page.waitForNavigation();
     await browser.close();
     return response;
   } catch (error: any) {
-    console.log(error);
+    console.error(error);
     await browser.close();
     return false;
   }

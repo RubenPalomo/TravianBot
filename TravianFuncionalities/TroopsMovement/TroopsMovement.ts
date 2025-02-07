@@ -1,8 +1,8 @@
 import { TroopsMovementProps } from "./TroopsMovement.props";
-import { url } from "../../utils/consts/travianConstants";
 
 export default async function TroopsMovement({
   page,
+  url,
   coordinates,
   troopAmount,
   troopDispatchType,
@@ -13,7 +13,7 @@ export default async function TroopsMovement({
   try {
     for (let index = 0; index < (executionCount ?? 1); index++) {
       await page.goto(
-        `${url}build.php?${fromVillageId && "newdid=" + fromVillageId}&id=39&tt=2&gid=16&x=${coordinates.x}&y=${coordinates.y}`,
+        `${url}build.php?${fromVillageId ? `newdid=${fromVillageId}` : ""}&id=39&tt=2&gid=16&x=${coordinates.x}&y=${coordinates.y}`,
         { waitUntil: "networkidle2" },
       );
 
@@ -33,7 +33,7 @@ export default async function TroopsMovement({
 
     return true;
   } catch (error: any) {
-    console.log(error);
+    console.error(error);
     return false;
   }
 }

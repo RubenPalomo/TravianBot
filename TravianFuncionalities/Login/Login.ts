@@ -1,4 +1,5 @@
 import { LoginProps } from "./Login.props";
+import { url } from "../../utils/consts/travianConstants";
 
 export default async function Login({
   page,
@@ -6,7 +7,7 @@ export default async function Login({
   password,
 }: LoginProps): Promise<boolean> {
   try {
-    await page.goto(process.env.URL ?? "", { waitUntil: "networkidle2" });
+    await page.goto(url, { waitUntil: "networkidle2" });
 
     await page.type('input[name="name"]', username);
     await page.type('input[name="password"]', password);
@@ -15,6 +16,7 @@ export default async function Login({
 
     return true;
   } catch (error: any) {
+    console.log(error);
     return false;
   }
 }

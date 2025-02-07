@@ -7,8 +7,8 @@ export default [
   { languageOptions: { globals: globals.browser } },
   ...tseslint.configs.recommended,
   {
-    "rules": {
-      "@typescript-eslint/no-explicit-any": "off"
-    }
-  },  
+    rules: {
+      "@typescript-eslint/no-explicit-any": "off",
+    },
+  },
 ];

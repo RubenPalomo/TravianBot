@@ -1,6 +1,7 @@
+import { url } from "../../utils/consts/travianConstants";
 import { SendResourcesProps } from "./SendResources.props";
 
-export default async function TroopsMovement({
+export default async function SendResources({
   page,
   coordinates,
   resourcesAmount,
@@ -8,7 +9,7 @@ export default async function TroopsMovement({
 }: SendResourcesProps): Promise<boolean> {
   try {
     await page.goto(
-      `${process.env.URL}build.php?${fromVillageId && "newdid=" + fromVillageId}&t=5&gid=17&x=${coordinates.x}&y=${coordinates.y}`,
+      `${url}build.php?${fromVillageId && "newdid=" + fromVillageId}&t=5&gid=17&x=${coordinates.x}&y=${coordinates.y}`,
       { waitUntil: "networkidle2" },
     );
 
@@ -19,10 +20,10 @@ export default async function TroopsMovement({
     await page.type('input[name="crop"]', resourcesAmount.crop.toString());
 
     await page.click('button[type="submit"]');
-    await page.waitForNavigation();
 
     return true;
   } catch (error: any) {
+    console.log(error);
     return false;
   }
 }

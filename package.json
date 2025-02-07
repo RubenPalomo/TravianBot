@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "travianbot.ts",
   "scripts": {
-    "start": "ts-node -r dotenv/config travianbot.ts",
+    "start": "ts-node travianbot.ts",
     "prettier": "npx prettier . --write",
     "lint": "eslint .",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -12,11 +12,12 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "dotenv": "^16.4.7",
+    "node-telegram-bot-api": "^0.66.0",
     "puppeteer": "^24.2.0",
     "yarn": "^1.22.22"
   },
   "devDependencies": {
+    "@types/node-telegram-bot-api": "^0.64.7",
     "@types/qs": "^6.9.18",
     "eslint": "^9.19.0",
     "globals": "^15.14.0",

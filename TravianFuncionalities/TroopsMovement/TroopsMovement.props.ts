@@ -6,6 +6,8 @@ export interface TroopsMovementProps {
     x: string;
     y: string;
   };
+  troopAmount: number;
+  troopDispatchType: number; // Reinforcement = 2; Attack = 3; Robbery = 4
   troopType:
     | "t1"
     | "t2"
@@ -17,8 +19,6 @@ export interface TroopsMovementProps {
     | "t8"
     | "t9"
     | "t10";
-  troopAmount: number;
-  troopDispatchType: number; // Reinforcement = 2; Attack = 3; Robbery = 4
   fromVillageId?: string;
   executionCount?: number;
 }

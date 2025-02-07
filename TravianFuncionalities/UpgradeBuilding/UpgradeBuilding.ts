@@ -1,4 +1,5 @@
 import { UpgradeBuildingProps } from "./UpgradeBuilding.props";
+import { url } from "../../utils/consts/travianConstants";
 
 export default async function UpgradeBuilding({
   page,
@@ -8,7 +9,7 @@ export default async function UpgradeBuilding({
 }: UpgradeBuildingProps): Promise<boolean> {
   try {
     await page.goto(
-      `${process.env.URL}build.php?${villageId && "newdid=" + villageId}&gid=${buildId}${locationId && "&id=" + locationId}`,
+      `${url}build.php?${villageId && "newdid=" + villageId}&gid=${buildId}${locationId && "&id=" + locationId}`,
       { waitUntil: "networkidle2" },
     );
 

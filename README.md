@@ -11,7 +11,7 @@ TravianBot es un bot de **Telegram** desarrollado en **Node.js y TypeScript** qu
 ## 📦 Instalación  
 
 ### 🔹 Clonar el Repositorio  
-git clone https://github.com/tuusuario/travianbot.git
+git clone https://github.com/tuusuario/travianbot.git<br>
 cd travianbot
 
 ### 🔹 Instalar Dependencias
@@ -21,15 +21,15 @@ npm install
 Ve a utils/consts y edítalo con tus variables.
 
 ### 🔹 Iniciar el Bot
-npm start
-O con PM2 para mantenerlo activo:
+npm start<br>
+O con PM2 para mantenerlo activo:<br>
 pm2 start ts-node --name=TravianBot -- travianbot.ts
 
 ## 🛠 Tecnologías Usadas
-Node.js
-TypeScript
-Telegram Bot API
-MongoDB
+- Node.js
+- TypeScript
+- Telegram Bot API
+- MongoDB
 
 ## 📜 Licencia
 Este proyecto está bajo la MIT License.
@@ -47,7 +47,7 @@ TravianBot is a **Telegram bot** developed in Node.js and TypeScript that allows
 
 ## 📦 Installation
 ### 🔹 Clone the Repository
-git clone https://github.com/youruser/travianbot.git
+git clone https://github.com/youruser/travianbot.git<br>
 cd travianbot
 
 ### 🔹 Install Dependencies
@@ -57,15 +57,15 @@ npm install
 Go to utils/consts and edit it with your variables
 
 ### 🔹 Start the Bot
-npm start
-Or use PM2 to keep it running:
+npm start<br>
+Or use PM2 to keep it running:<br>
 pm2 start ts-node --name=TravianBot -- travianbot.ts
 
 ## 🛠 Technologies Used
-Node.js
-TypeScript
-Telegram Bot API
-MongoDB
+- Node.js
+- TypeScript
+- Telegram Bot API
+- MongoDB
 
 ## 📜 License
 This project is under the MIT License.

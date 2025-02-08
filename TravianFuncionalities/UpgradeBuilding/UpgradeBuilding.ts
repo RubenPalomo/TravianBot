@@ -13,7 +13,7 @@ export default async function UpgradeBuilding({
       { waitUntil: "networkidle2" },
     );
 
-    await page.click('button[version="textButtonV1"]');
+    await page.click('button.textButtonV1.green.build');
 
     return true;
   } catch (error) {

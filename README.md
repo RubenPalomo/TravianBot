@@ -41,6 +41,10 @@ pm2 start ts-node --name=TravianBot -- travianbot.ts
 
 Este proyecto está bajo la MIT License.
 
+## 🌟 Acceso al bot
+
+Este bot está operativo en Telegram, siendo el bot @Travian_Assistant_Bot
+
 ---
 
 # 🤖 TravianBot - Telegram Bot for Managing Tasks in Travian
@@ -85,3 +89,7 @@ pm2 start ts-node --name=TravianBot -- travianbot.ts
 ## 📜 License
 
 This project is under the MIT License.
+
+## 🌟 Bot access
+
+This bot is operational on Telegram, being the bot @Travian_Assistant_Bot

@@ -9,6 +9,21 @@ export const parseUpgradeData = (data: string[]): UpgradeData | null => {
     buildId: "",
   };
 
+  if (data.length === 1) {
+    const urlObj = new URL(data[0]);
+    const params = urlObj.searchParams;
+
+    const villageId = params.get("newdid");
+    const locationId = params.get("id");
+    const buildId = params.get("gid");
+
+    return {
+      buildId,
+      locationId,
+      villageId,
+    } as UpgradeData;
+  }
+
   for (const element of data) {
     const [key, value] = element.split(":");
     if (!value) return null;

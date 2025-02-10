@@ -130,9 +130,16 @@ bot.onText(/^\/movetroops(x3)?(.+)/, async (msg, match) => {
   const parsedData = parseTroopsMovementData(data.slice(1));
   if (parsedData === null) {
     wrongFormat();
+    return;
   } else {
     bot.sendMessage(msg.chat.id, "Moviendo tropas...");
     const credentials = await GetCredentials(msg.chat.id);
+
+    if (credentials === null) {
+      bot.sendMessage(msg.chat.id, "Error al obtener tus credenciales.");
+      return;
+    }
+
     const response = await TravianManager({
       url: credentials.url,
       username: credentials.mail,
@@ -174,9 +181,16 @@ bot.onText(/^\/sendresources(.+)/, async (msg, match) => {
   const parsedData = parseResourcesMovementData(data.slice(1));
   if (parsedData === null) {
     wrongFormat();
+    return;
   } else {
     bot.sendMessage(msg.chat.id, "Enviando recursos...");
     const credentials = await GetCredentials(msg.chat.id);
+
+    if (credentials === null) {
+      bot.sendMessage(msg.chat.id, "Error al obtener tus credenciales.");
+      return;
+    }
+
     const response = await TravianManager({
       url: credentials.url,
       username: credentials.mail,
@@ -212,17 +226,20 @@ bot.onText(/^\/upgrade(.+)/, async (msg, match) => {
   }
 
   const data: any = match[0].split(" ");
-  if (data.length < 2) {
-    wrongFormat();
-    return;
-  }
-
   const parsedData = parseUpgradeData(data.slice(1));
+
   if (parsedData === null) {
     wrongFormat();
+    return;
   } else {
     bot.sendMessage(msg.chat.id, "Mejorando edificio...");
     const credentials = await GetCredentials(msg.chat.id);
+
+    if (credentials === null) {
+      bot.sendMessage(msg.chat.id, "Error al obtener tus credenciales.");
+      return;
+    }
+
     const response = await TravianManager({
       url: credentials.url,
       username: credentials.mail,
@@ -265,9 +282,16 @@ bot.onText(/^\/recruit(.+)/, async (msg, match) => {
   const parsedData = parseTroopsRecruitmentData(data.slice(1));
   if (parsedData === null) {
     wrongFormat();
+    return;
   } else {
     bot.sendMessage(msg.chat.id, "Reclutando tropas...");
     const credentials = await GetCredentials(msg.chat.id);
+
+    if (credentials === null) {
+      bot.sendMessage(msg.chat.id, "Error al obtener tus credenciales.");
+      return;
+    }
+
     const response = await TravianManager({
       url: credentials.url,
       username: credentials.mail,

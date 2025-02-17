@@ -1,4 +1,5 @@
 import puppeteer, { Page } from "puppeteer";
+import GoldCowList from "../GoldCowList/GoldCowList";
 import Login from "../Login/Login";
 import SendResources from "../SendResources/SendResources";
 import TroopsMovement from "../TroopsMovement/TroopsMovement";
@@ -88,6 +89,15 @@ export default async function TravianManager({
             troopAmount: data.troopAmount,
             villageId: data.villageId,
           });
+          break;
+
+        case "/goldcowlist":
+          response = await GoldCowList({
+            url: url,
+            page: page,
+            villageId: data.villageId,
+          });
+          break;
 
         default:
           break;

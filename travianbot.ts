@@ -27,12 +27,12 @@ bot.onText(/^\/start/, async (msg) => {
   if (isNewUser) {
     bot.sendMessage(
       msg.chat.id,
-      `Hola de nuevo, ${msg.chat.first_name}. ¿Qué puedo hacer por ti?`,
+      `Hola de nuevo, ${msg.chat.first_name}. ¿Qué puedo hacer por ti?`
     );
   } else {
     bot.sendMessage(
       msg.chat.id,
-      `Bienvenido ${msg.chat.first_name}. Usa el comando /help para ver los comandos disponibles.`,
+      `Bienvenido ${msg.chat.first_name}. Usa el comando /help para ver los comandos disponibles.`
     );
     AddUser(msg.chat.id);
   }
@@ -71,7 +71,7 @@ bot.onText(/^\/setPassword(.+)/, async (msg, match) => {
         `Se ha actualizado tu password a _${password.replace(/./g, "*")}_`,
         {
           parse_mode: "Markdown",
-        },
+        }
       )
     : bot.sendMessage(msg.chat.id, "Error al actualizar tu password.");
 });
@@ -82,7 +82,7 @@ bot.onText(/^\/setServer(.+)/, async (msg, match) => {
       msg.chat.id,
       "Formato: /setServer (url del servidor)" +
         "\nEs importante que evites poner dorf1 o dorf2 al final de la url." +
-        "\n\nEjemplo: /setServer https://ts31.x3.europe.travian.com/",
+        "\n\nEjemplo: /setServer https://ts31.x3.europe.travian.com/"
     );
     return;
   }
@@ -97,7 +97,7 @@ bot.onText(/^\/setServer(.+)/, async (msg, match) => {
         `Se ha actualizado tu servidor a \n*${server}*`,
         {
           parse_mode: "Markdown",
-        },
+        }
       )
     : bot.sendMessage(msg.chat.id, "Error al actualizar tu servidor.");
 });
@@ -108,11 +108,11 @@ bot.onText(/^\/movetroops(x3)?(.+)/, async (msg, match) => {
     bot.sendMessage(
       msg.chat.id,
       "Formato:\n/movetroops coordinates:(XX,YY) troopType:tX troopAmount:XXXX troopDispatchType:X.\n\nPuedes añadir también from:XXXX con el ID de la aldea emisora." +
-        "\n\nNota: troopDispatchType es el tipo de movimiento de tropas. 2 = Refuerzo; 3 = Ataque; 4 = Atraco.",
+        "\n\nNota: troopDispatchType es el tipo de movimiento de tropas. 2 = Refuerzo; 3 = Ataque; 4 = Atraco."
     );
     bot.sendMessage(
       msg.chat.id,
-      "Puedes cambiar el orden, pero es importante respetar los espacios y los dos puntos.",
+      "Puedes cambiar el orden, pero es importante respetar los espacios y los dos puntos."
     );
   };
 
@@ -159,11 +159,11 @@ bot.onText(/^\/sendresources(.+)/, async (msg, match) => {
     sendFormatError(msg.chat.id);
     bot.sendMessage(
       msg.chat.id,
-      "Formato:\n/sendresources coordinates:(XX,YY) lumber:XXXX clay:XXXX iron:XXXX crop:XXXX.\n\nPuedes añadir también from:XXXX con el ID de la aldea emisora.",
+      "Formato:\n/sendresources coordinates:(XX,YY) lumber:XXXX clay:XXXX iron:XXXX crop:XXXX.\n\nPuedes añadir también from:XXXX con el ID de la aldea emisora."
     );
     bot.sendMessage(
       msg.chat.id,
-      "Puedes cambiar el orden, pero es importante respetar los espacios y los dos puntos. También puedes obviar los recursos que no te interesen enviar.",
+      "Puedes cambiar el orden, pero es importante respetar los espacios y los dos puntos. También puedes obviar los recursos que no te interesen enviar."
     );
   };
 
@@ -212,11 +212,11 @@ bot.onText(/^\/upgrade(.+)/, async (msg, match) => {
       msg.chat.id,
       "Formato:\n/upgrade buildId:XX.\n\nPuedes añadir también villageId:XXXX con el ID de la aldea emisora y locationId:XXXX con el ID de la localización del edificio." +
         "\Añadir el ID de la localización es especialmente útil en casos con múltiples edificios con el mismo nombre (recursos, escondites, etc)." +
-        "\n\nTodo esto lo puedes encontrar en el link de la página de Travian. id=XXXXX es la localización del edificio, gid=XXXX es su ID y newdid=XXXX es el ID de la aldea.",
+        "\n\nTodo esto lo puedes encontrar en el link de la página de Travian. id=XXXXX es la localización del edificio, gid=XXXX es su ID y newdid=XXXX es el ID de la aldea."
     );
     bot.sendMessage(
       msg.chat.id,
-      "Puedes cambiar el orden en el comando, pero es importante respetar los espacios y los dos puntos.",
+      "Puedes cambiar el orden en el comando, pero es importante respetar los espacios y los dos puntos."
     );
   };
 
@@ -260,11 +260,11 @@ bot.onText(/^\/recruit(.+)/, async (msg, match) => {
     bot.sendMessage(
       msg.chat.id,
       "Formato:\n/recruit buildId:XX troopType:tX troopAmount:XXXX.\n\nPuedes añadir también villageId:XXXX con el ID de la aldea." +
-        "\n\nNota: El ID del cuartel es 19 y el del establo 20.",
+        "\n\nNota: El ID del cuartel es 19 y el del establo 20."
     );
     bot.sendMessage(
       msg.chat.id,
-      "Puedes cambiar el orden en el comando, pero es importante respetar los espacios y los dos puntos.",
+      "Puedes cambiar el orden en el comando, pero es importante respetar los espacios y los dos puntos."
     );
   };
 
@@ -306,6 +306,43 @@ bot.onText(/^\/recruit(.+)/, async (msg, match) => {
   }
 });
 
+bot.onText(/^\/goldcowlist(?:\s(.*))?$/, async (msg, match) => {
+  const request: string = match?.[0].split(" ")[0] ?? "";
+  const extraText: string | undefined = match?.[1]?.trim();
+  const data: string[] | undefined = extraText?.split(":");
+
+  bot.sendMessage(msg.chat.id, "Atacando vacas...");
+
+  const credentials = await GetCredentials(msg.chat.id);
+
+  if (credentials === null) {
+    bot.sendMessage(msg.chat.id, "Error al obtener tus credenciales.");
+    return;
+  }
+
+  if (data !== undefined && data?.[0] !== "villageId") return;
+
+  const response = await TravianManager({
+    url: credentials.url,
+    username: credentials.mail,
+    password: credentials.password,
+    request: request,
+    data: {
+      villageId: data ? data[1] : undefined,
+    },
+  });
+
+  response
+    ? bot.sendMessage(
+        msg.chat.id,
+        "Vaquitas atacadas correctamente. _Moooooo!_",
+        {
+          parse_mode: "Markdown",
+        }
+      )
+    : bot.sendMessage(msg.chat.id, "Error al atacar vacas.");
+});
+
 bot.onText(/^\/help(?:\s(.*))?$/, async (msg, match) => {
   const extraText = match?.[1]?.trim();
 
@@ -324,14 +361,14 @@ bot.onText(/^\/help(?:\s(.*))?$/, async (msg, match) => {
         "*/recruit*: Recluta tropas en una aldea.",
       {
         parse_mode: "Markdown",
-      },
+      }
     );
     bot.sendMessage(
       msg.chat.id,
       'Además, también puedes escribir *"/help COMANDO"* (sin la /) para recibir más información al respecto.',
       {
         parse_mode: "Markdown",
-      },
+      }
     );
   } else {
     switch (extraText) {
@@ -344,7 +381,7 @@ bot.onText(/^\/help(?:\s(.*))?$/, async (msg, match) => {
             "\n\n*Nota:* troopDispatchType es el tipo de movimiento de tropas. 2 = Refuerzo; 3 = Ataque; 4 = Atraco.",
           {
             parse_mode: "Markdown",
-          },
+          }
         );
         break;
 
@@ -357,7 +394,7 @@ bot.onText(/^\/help(?:\s(.*))?$/, async (msg, match) => {
             "\n\nPuedes cambiar el orden, pero es importante respetar los espacios y los dos puntos.\nTambién puedes obviar los recursos que no te interesen enviar.",
           {
             parse_mode: "Markdown",
-          },
+          }
         );
         break;
 
@@ -371,7 +408,7 @@ bot.onText(/^\/help(?:\s(.*))?$/, async (msg, match) => {
             "\n\nTodo esto lo puedes encontrar en el link de la página de Travian. id=XXXXX es la localización del edificio, gid=XXXX es su ID y newdid=XXXX es el ID de la aldea.",
           {
             parse_mode: "Markdown",
-          },
+          }
         );
         break;
 
@@ -384,7 +421,7 @@ bot.onText(/^\/help(?:\s(.*))?$/, async (msg, match) => {
             "\n\n*Nota:* El ID del cuartel es 19 y el del establo 20.",
           {
             parse_mode: "Markdown",
-          },
+          }
         );
         break;
 
@@ -394,7 +431,7 @@ bot.onText(/^\/help(?:\s(.*))?$/, async (msg, match) => {
           "Comando no encontrado. Usa */help* para ver los comandos disponibles.",
           {
             parse_mode: "Markdown",
-          },
+          }
         );
         break;
     }

@@ -1,20 +1,26 @@
 import TelegramBot from "node-telegram-bot-api";
-import { telegramToken } from "./utils/consts/telegramConstants";
+import TravianManager from "./TravianFuncionalities/TravianManager/TravianManager";
+import {
+  TELEGRAM_CHAT_ID,
+  TELEGRAM_TOKEN,
+  USER,
+  PASSWORD,
+  URL,
+} from "./utils/consts/const";
 import { parseResourcesMovementData } from "./utils/parse/parseResourcesMovementData/parseResourcesMovementData";
 import { parseTroopsMovementData } from "./utils/parse/parseTroopsMovementData/parseTroopsMovementData";
 import { parseTroopsRecruitmentData } from "./utils/parse/parseTroopsRecruitment/parseTroopsRecruitment";
 import { parseUpgradeData } from "./utils/parse/parseUpgradeData/parseUpgradeData";
-import TravianManager from "./TravianFuncionalities/TravianManager/TravianManager";
-import {
-  AddUser,
-  CheckUser,
-  GetCredentials,
-  UpdateUser,
-} from "./MongoDBAPI/MongoDBAPI";
 
-const bot = new TelegramBot(telegramToken, {
+const bot = new TelegramBot(TELEGRAM_TOKEN, {
   polling: true,
 });
+
+const credentials = {
+  mail: USER,
+  password: PASSWORD,
+  url: URL,
+};
 
 const sendFormatError = (msgChatId: number): void => {
   bot.sendMessage(msgChatId, "*Error:* Fallo en el formato.", {
@@ -23,92 +29,35 @@ const sendFormatError = (msgChatId: number): void => {
 };
 
 bot.onText(/^\/start/, async (msg) => {
-  const isNewUser = await CheckUser(msg.chat.id);
-  if (isNewUser) {
+  if (TELEGRAM_CHAT_ID !== msg.chat.id.toString()) {
     bot.sendMessage(
       msg.chat.id,
-      `Hola de nuevo, ${msg.chat.first_name}. ¿Qué puedo hacer por ti?`,
+      `Lo siento, ${msg.chat.first_name}. No tienes permiso para usar este bot. Puedes hacer el tuyo propio en GitHub: https://github.com/RubenPalomo/TravianBot`,
     );
+    return;
   } else {
     bot.sendMessage(
       msg.chat.id,
       `Bienvenido ${msg.chat.first_name}. Usa el comando /help para ver los comandos disponibles.`,
     );
-    AddUser(msg.chat.id);
   }
 });
 
-bot.onText(/^\/setMail(.+)/, async (msg, match) => {
-  if (match === null) {
-    bot.sendMessage(msg.chat.id, "Formato: /setMail XXXX@XXXX.com");
-    return;
-  }
-
-  const mail = match[0].split(" ")[1].trim();
-  const response = await UpdateUser(msg.chat.id, {
-    mail: mail,
-  });
-  response
-    ? bot.sendMessage(msg.chat.id, `Se ha actualizado tu mail a *${mail}*`, {
-        parse_mode: "Markdown",
-      })
-    : bot.sendMessage(msg.chat.id, "Error al actualizar tu mail.");
-});
-
-bot.onText(/^\/setPassword(.+)/, async (msg, match) => {
-  if (match === null) {
-    bot.sendMessage(msg.chat.id, "Formato: /setPassword XXXX");
-    return;
-  }
-
-  const password = match[0].split(" ")[1].trim();
-  const response = await UpdateUser(msg.chat.id, {
-    password: password,
-  });
-  response
-    ? bot.sendMessage(
-        msg.chat.id,
-        `Se ha actualizado tu password a _${password.replace(/./g, "*")}_`,
-        {
-          parse_mode: "Markdown",
-        },
-      )
-    : bot.sendMessage(msg.chat.id, "Error al actualizar tu password.");
-});
-
-bot.onText(/^\/setServer(.+)/, async (msg, match) => {
-  if (match === null) {
+bot.onText(/^\/movetroops(x3)?(.+)/, async (msg, match) => {
+  if (TELEGRAM_CHAT_ID !== msg.chat.id.toString()) {
     bot.sendMessage(
       msg.chat.id,
-      "Formato: /setServer (url del servidor)" +
-        "\nEs importante que evites poner dorf1 o dorf2 al final de la url." +
-        "\n\nEjemplo: /setServer https://ts31.x3.europe.travian.com/",
+      `Lo siento, ${msg.chat.first_name}. No tienes permiso para usar este bot. Puedes hacer el tuyo propio en GitHub: https://github.com/RubenPalomo/TravianBot`,
     );
     return;
   }
 
-  const server = match[0].split(" ")[1].trim();
-  const response = await UpdateUser(msg.chat.id, {
-    url: server,
-  });
-  response
-    ? bot.sendMessage(
-        msg.chat.id,
-        `Se ha actualizado tu servidor a \n*${server}*`,
-        {
-          parse_mode: "Markdown",
-        },
-      )
-    : bot.sendMessage(msg.chat.id, "Error al actualizar tu servidor.");
-});
-
-bot.onText(/^\/movetroops(x3)?(.+)/, async (msg, match) => {
   const wrongFormat = (): void => {
     sendFormatError(msg.chat.id);
     bot.sendMessage(
       msg.chat.id,
       "Formato:\n/movetroops coordinates:(XX,YY) troopType:tX troopAmount:XXXX troopDispatchType:X.\n\nPuedes añadir también from:XXXX con el ID de la aldea emisora." +
-        "\n\nNota: troopDispatchType es el tipo de movimiento de tropas. 2 = Refuerzo; 3 = Ataque; 4 = Atraco.",
+      "\n\nNota: troopDispatchType es el tipo de movimiento de tropas. 2 = Refuerzo; 3 = Ataque; 4 = Atraco.",
     );
     bot.sendMessage(
       msg.chat.id,
@@ -133,12 +82,6 @@ bot.onText(/^\/movetroops(x3)?(.+)/, async (msg, match) => {
     return;
   } else {
     bot.sendMessage(msg.chat.id, "Moviendo tropas...");
-    const credentials = await GetCredentials(msg.chat.id);
-
-    if (credentials === null) {
-      bot.sendMessage(msg.chat.id, "Error al obtener tus credenciales.");
-      return;
-    }
 
     const response = await TravianManager({
       url: credentials.url,
@@ -148,13 +91,20 @@ bot.onText(/^\/movetroops(x3)?(.+)/, async (msg, match) => {
       data: parsedData,
     });
 
-    response
-      ? bot.sendMessage(msg.chat.id, "Tropas movidas correctamente.")
-      : bot.sendMessage(msg.chat.id, "Error al mover las tropas.");
+    if (response) bot.sendMessage(msg.chat.id, "Tropas movidas correctamente.");
+    else bot.sendMessage(msg.chat.id, "Error al mover las tropas.");
   }
 });
 
 bot.onText(/^\/sendresources(.+)/, async (msg, match) => {
+  if (TELEGRAM_CHAT_ID !== msg.chat.id.toString()) {
+    bot.sendMessage(
+      msg.chat.id,
+      `Lo siento, ${msg.chat.first_name}. No tienes permiso para usar este bot. Puedes hacer el tuyo propio en GitHub: https://github.com/RubenPalomo/TravianBot`,
+    );
+    return;
+  }
+
   const wrongFormat = (): void => {
     sendFormatError(msg.chat.id);
     bot.sendMessage(
@@ -184,12 +134,6 @@ bot.onText(/^\/sendresources(.+)/, async (msg, match) => {
     return;
   } else {
     bot.sendMessage(msg.chat.id, "Enviando recursos...");
-    const credentials = await GetCredentials(msg.chat.id);
-
-    if (credentials === null) {
-      bot.sendMessage(msg.chat.id, "Error al obtener tus credenciales.");
-      return;
-    }
 
     const response = await TravianManager({
       url: credentials.url,
@@ -199,20 +143,28 @@ bot.onText(/^\/sendresources(.+)/, async (msg, match) => {
       data: parsedData,
     });
 
-    response
-      ? bot.sendMessage(msg.chat.id, "Recursos enviados correctamente.")
-      : bot.sendMessage(msg.chat.id, "Error al enviar recursos.");
+    if (response)
+      bot.sendMessage(msg.chat.id, "Recursos enviados correctamente.");
+    else bot.sendMessage(msg.chat.id, "Error al enviar recursos.");
   }
 });
 
 bot.onText(/^\/upgrade(.+)/, async (msg, match) => {
+  if (TELEGRAM_CHAT_ID !== msg.chat.id.toString()) {
+    bot.sendMessage(
+      msg.chat.id,
+      `Lo siento, ${msg.chat.first_name}. No tienes permiso para usar este bot. Puedes hacer el tuyo propio en GitHub: https://github.com/RubenPalomo/TravianBot`,
+    );
+    return;
+  }
+
   const wrongFormat = (): void => {
     sendFormatError(msg.chat.id);
     bot.sendMessage(
       msg.chat.id,
       "Formato:\n/upgrade buildId:XX.\n\nPuedes añadir también villageId:XXXX con el ID de la aldea emisora y locationId:XXXX con el ID de la localización del edificio." +
-        "\Añadir el ID de la localización es especialmente útil en casos con múltiples edificios con el mismo nombre (recursos, escondites, etc)." +
-        "\n\nTodo esto lo puedes encontrar en el link de la página de Travian. id=XXXXX es la localización del edificio, gid=XXXX es su ID y newdid=XXXX es el ID de la aldea.",
+      "\Añadir el ID de la localización es especialmente útil en casos con múltiples edificios con el mismo nombre (recursos, escondites, etc)." +
+      "\n\nTodo esto lo puedes encontrar en el link de la página de Travian. id=XXXXX es la localización del edificio, gid=XXXX es su ID y newdid=XXXX es el ID de la aldea.",
     );
     bot.sendMessage(
       msg.chat.id,
@@ -233,12 +185,6 @@ bot.onText(/^\/upgrade(.+)/, async (msg, match) => {
     return;
   } else {
     bot.sendMessage(msg.chat.id, "Mejorando edificio...");
-    const credentials = await GetCredentials(msg.chat.id);
-
-    if (credentials === null) {
-      bot.sendMessage(msg.chat.id, "Error al obtener tus credenciales.");
-      return;
-    }
 
     const response = await TravianManager({
       url: credentials.url,
@@ -248,19 +194,27 @@ bot.onText(/^\/upgrade(.+)/, async (msg, match) => {
       data: parsedData,
     });
 
-    response
-      ? bot.sendMessage(msg.chat.id, "Edificio mejorado correctamente.")
-      : bot.sendMessage(msg.chat.id, "Error al mejorar edificio.");
+    if (response)
+      bot.sendMessage(msg.chat.id, "Edificio mejorado correctamente.");
+    else bot.sendMessage(msg.chat.id, "Error al mejorar edificio.");
   }
 });
 
 bot.onText(/^\/recruit(.+)/, async (msg, match) => {
+  if (TELEGRAM_CHAT_ID !== msg.chat.id.toString()) {
+    bot.sendMessage(
+      msg.chat.id,
+      `Lo siento, ${msg.chat.first_name}. No tienes permiso para usar este bot. Puedes hacer el tuyo propio en GitHub: https://github.com/RubenPalomo/TravianBot`,
+    );
+    return;
+  }
+
   const wrongFormat = (): void => {
     sendFormatError(msg.chat.id);
     bot.sendMessage(
       msg.chat.id,
       "Formato:\n/recruit buildId:XX troopType:tX troopAmount:XXXX.\n\nPuedes añadir también villageId:XXXX con el ID de la aldea." +
-        "\n\nNota: El ID del cuartel es 19 y el del establo 20.",
+      "\n\nNota: El ID del cuartel es 19 y el del establo 20.",
     );
     bot.sendMessage(
       msg.chat.id,
@@ -285,12 +239,6 @@ bot.onText(/^\/recruit(.+)/, async (msg, match) => {
     return;
   } else {
     bot.sendMessage(msg.chat.id, "Reclutando tropas...");
-    const credentials = await GetCredentials(msg.chat.id);
-
-    if (credentials === null) {
-      bot.sendMessage(msg.chat.id, "Error al obtener tus credenciales.");
-      return;
-    }
 
     const response = await TravianManager({
       url: credentials.url,
@@ -300,28 +248,36 @@ bot.onText(/^\/recruit(.+)/, async (msg, match) => {
       data: parsedData,
     });
 
-    response
-      ? bot.sendMessage(msg.chat.id, "Tropas reclutadas correctamente.")
-      : bot.sendMessage(msg.chat.id, "Error al reclutar tropas.");
+    if (response)
+      bot.sendMessage(msg.chat.id, "Tropas reclutadas correctamente.");
+    else bot.sendMessage(msg.chat.id, "Error al reclutar tropas.");
   }
 });
 
 bot.onText(/^\/help(?:\s(.*))?$/, async (msg, match) => {
+  if (TELEGRAM_CHAT_ID !== msg.chat.id.toString()) {
+    bot.sendMessage(
+      msg.chat.id,
+      `Lo siento, ${msg.chat.first_name}. No tienes permiso para usar este bot. Puedes hacer el tuyo propio en GitHub: https://github.com/RubenPalomo/TravianBot`,
+    );
+    return;
+  }
+
   const extraText = match?.[1]?.trim();
 
   if (!extraText) {
     await bot.sendMessage(
       msg.chat.id,
       "*Asistente del Asistente*\n\n" +
-        "Lo primero que debes hacer es facilitarme tu servidor. Para ello escribe */setServer* (url completa)." +
-        "\nRecuerda evitar poner dorf1 o dorf2 al final de la url." +
-        "\n\nLo siguiente es facilitarme tus credenciales de acceso al juego." +
-        "\nPara ello escribe */setMail (tu mail)* y */setPassword (tu contraseña)* con tus credenciales." +
-        "\n\nUna vez hecho esto, puedes usar los siguientes comandos:\n" +
-        "*/movetroops*: Mueve tropas de una aldea a otra.\n" +
-        "*/sendresources*: Envía recursos de una aldea a otra.\n" +
-        "*/upgrade*: Mejora un edificio de una aldea.\n" +
-        "*/recruit*: Recluta tropas en una aldea.",
+      "Lo primero que debes hacer es facilitarme tu servidor. Para ello escribe */setServer* (url completa)." +
+      "\nRecuerda evitar poner dorf1 o dorf2 al final de la url." +
+      "\n\nLo siguiente es facilitarme tus credenciales de acceso al juego." +
+      "\nPara ello escribe */setMail (tu mail)* y */setPassword (tu contraseña)* con tus credenciales." +
+      "\n\nUna vez hecho esto, puedes usar los siguientes comandos:\n" +
+      "*/movetroops*: Mueve tropas de una aldea a otra.\n" +
+      "*/sendresources*: Envía recursos de una aldea a otra.\n" +
+      "*/upgrade*: Mejora un edificio de una aldea.\n" +
+      "*/recruit*: Recluta tropas en una aldea.",
       {
         parse_mode: "Markdown",
       },
@@ -339,9 +295,9 @@ bot.onText(/^\/help(?:\s(.*))?$/, async (msg, match) => {
         bot.sendMessage(
           msg.chat.id,
           "El comando */movetroops* permite mover tropas de una aldea a otra." +
-            "\n\nFormato:\n/movetroops coordinates:(XX,YY) troopType:tX troopAmount:XXXX troopDispatchType:X." +
-            "\n\nPuedes añadir también from:XXXX con el ID de la aldea emisora." +
-            "\n\n*Nota:* troopDispatchType es el tipo de movimiento de tropas. 2 = Refuerzo; 3 = Ataque; 4 = Atraco.",
+          "\n\nFormato:\n/movetroops coordinates:(XX,YY) troopType:tX troopAmount:XXXX troopDispatchType:X." +
+          "\n\nPuedes añadir también from:XXXX con el ID de la aldea emisora." +
+          "\n\n*Nota:* troopDispatchType es el tipo de movimiento de tropas. 2 = Refuerzo; 3 = Ataque; 4 = Atraco.",
           {
             parse_mode: "Markdown",
           },
@@ -352,9 +308,9 @@ bot.onText(/^\/help(?:\s(.*))?$/, async (msg, match) => {
         bot.sendMessage(
           msg.chat.id,
           "El comando */sendresources* permite enviar recursos de una aldea a otra." +
-            "\n\nFormato:\n/sendresources coordinates:(XX,YY) lumber:XXXX clay:XXXX iron:XXXX crop:XXXX." +
-            "\n\nPuedes añadir también from:XXXX con el ID de la aldea emisora." +
-            "\n\nPuedes cambiar el orden, pero es importante respetar los espacios y los dos puntos.\nTambién puedes obviar los recursos que no te interesen enviar.",
+          "\n\nFormato:\n/sendresources coordinates:(XX,YY) lumber:XXXX clay:XXXX iron:XXXX crop:XXXX." +
+          "\n\nPuedes añadir también from:XXXX con el ID de la aldea emisora." +
+          "\n\nPuedes cambiar el orden, pero es importante respetar los espacios y los dos puntos.\nTambién puedes obviar los recursos que no te interesen enviar.",
           {
             parse_mode: "Markdown",
           },
@@ -365,10 +321,10 @@ bot.onText(/^\/help(?:\s(.*))?$/, async (msg, match) => {
         bot.sendMessage(
           msg.chat.id,
           "El comando */upgrade* permite mejorar un edificio de una aldea." +
-            "\n\nFormato:\n/upgrade buildId:XX." +
-            "\n\nPuedes añadir también villageId:XXXX con el ID de la aldea emisora y locationId:XXXX con el ID de la localización del edificio." +
-            "\n\nLa localización del edificio es especialmente útil en casos con múltiples edificios con el mismo nombre (recursos, escondites, etc)." +
-            "\n\nTodo esto lo puedes encontrar en el link de la página de Travian. id=XXXXX es la localización del edificio, gid=XXXX es su ID y newdid=XXXX es el ID de la aldea.",
+          "\n\nFormato:\n/upgrade buildId:XX." +
+          "\n\nPuedes añadir también villageId:XXXX con el ID de la aldea emisora y locationId:XXXX con el ID de la localización del edificio." +
+          "\n\nLa localización del edificio es especialmente útil en casos con múltiples edificios con el mismo nombre (recursos, escondites, etc)." +
+          "\n\nTodo esto lo puedes encontrar en el link de la página de Travian. id=XXXXX es la localización del edificio, gid=XXXX es su ID y newdid=XXXX es el ID de la aldea.",
           {
             parse_mode: "Markdown",
           },
@@ -379,9 +335,9 @@ bot.onText(/^\/help(?:\s(.*))?$/, async (msg, match) => {
         bot.sendMessage(
           msg.chat.id,
           "El comando */recruit* permite reclutar tropas en una aldea." +
-            "\n\nFormato:\n/recruit buildId:XX troopType:tX troopAmount:XXXX." +
-            "\n\nPuedes añadir también villageId:XXXX con el ID de la aldea." +
-            "\n\n*Nota:* El ID del cuartel es 19 y el del establo 20.",
+          "\n\nFormato:\n/recruit buildId:XX troopType:tX troopAmount:XXXX." +
+          "\n\nPuedes añadir también villageId:XXXX con el ID de la aldea." +
+          "\n\n*Nota:* El ID del cuartel es 19 y el del establo 20.",
           {
             parse_mode: "Markdown",
           },

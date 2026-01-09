@@ -2,9 +2,9 @@ import puppeteer, { Page } from "puppeteer";
 import Login from "../Login/Login";
 import SendResources from "../SendResources/SendResources";
 import TroopsMovement from "../TroopsMovement/TroopsMovement";
+import TroopsRecruitment from "../TroopsRecruitment/TroopsRecruitment";
 import UpgradeBuilding from "../UpgradeBuilding/UpgradeBuilding";
 import { TravianManagerProps } from "./TravianManager.props";
-import TroopsRecruitment from "../TroopsRecruitment/TroopsRecruitment";
 
 export default async function TravianManager({
   url,

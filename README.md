@@ -35,7 +35,6 @@ pm2 start ts-node --name=TravianBot -- travianbot.ts
 - Node.js
 - TypeScript
 - Telegram Bot API
-- MongoDB
 
 ## 📜 Licencia
 
@@ -84,12 +83,7 @@ pm2 start ts-node --name=TravianBot -- travianbot.ts
 - Node.js
 - TypeScript
 - Telegram Bot API
-- MongoDB
 
 ## 📜 License
 
 This project is under the MIT License.
-
-## 🌟 Bot access
-
-This bot is operational on Telegram, being the bot @Travian_Assistant_Bot
